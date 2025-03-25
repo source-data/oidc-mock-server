@@ -15,4 +15,5 @@ RUN chown -R node:node /app
 
 USER 1000
 
+ENV DEBUG="oidc-provider:*"
 CMD [ "npm", "start" ]
