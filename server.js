@@ -15,7 +15,7 @@ const clientNums = Array.from({ length: clientCount }, (_, i) => i + 1);
 const clientConfigs = clientNums.map(clientNum => {
   const suffix = clientNum > 1 ? `_${clientNum}` : '';
 
-  const clientConfig = ['CLIENT_ID', 'CLIENT_REDIRECT_URI', 'CLIENT_LOGOUT_REDIRECT_URI'].reduce((acc, v) => {
+  const clientConfig = ['CLIENT_ID', 'CLIENT_SECRET', 'CLIENT_TOKEN_ENDPOINT_AUTH_METHOD', 'CLIENT_REDIRECT_URI', 'CLIENT_LOGOUT_REDIRECT_URI'].reduce((acc, v) => {
     const v2 = `${v}${suffix}`;
     assert(process.env[v2], `${v2} config missing`);
     acc[camelCase(v)] = process.env[v2];
@@ -67,10 +67,11 @@ const oidcConfig = {
   responseTypes: ['id_token token', 'code'],
   clients: clientConfigs.map(clientConfig => ({
     client_id: clientConfig.clientId,
+    client_secret: clientConfig.clientSecret,
     redirect_uris: clientConfig.redirect_uris,
     response_types: ['id_token token', 'code'],
     grant_types: ['implicit', 'authorization_code'],
-    token_endpoint_auth_method: 'none',
+    token_endpoint_auth_method: clientConfig.clientTokenEndpointAuthMethod,
     post_logout_redirect_uris: [clientConfig.clientLogoutRedirectUri]
   }))
 };
